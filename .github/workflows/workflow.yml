@@ -17,7 +17,8 @@ on:
 # 2. Change these variables for your configuration:
 env:
   AZURE_WEBAPP_NAME: BookStoreApi7394  # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: './'  # set this to the path to your web app project, defaults to the repository root
+  AZURE_WEBAPP_PATH: './src/BookStore.Api/'
+  AZURE_WEBAPP_PACKAGE_PATH: './publish'
   DOTNET_VERSION: '3.1.x'  # set this to the dot net version to use
 
 jobs:
@@ -38,9 +39,9 @@ jobs:
       # Run dotnet build and publish
       - name: Build and publish
         run: |
-          pushd ./src/BookStore.Api
+          pushd '${{ env.AZURE_WEBAPP_PATH }}'
           dotnet build --configuration Release
-          dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+          dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
           popd
           
       # Deploy to Azure Web apps
@@ -49,5 +50,5 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }} # Define secret variable in repository settings as per action documentation
-          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+          package: '${{ env.AZURE_WEBAPP_PATH }}/${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
     
